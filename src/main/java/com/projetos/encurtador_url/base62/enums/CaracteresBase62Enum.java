@@ -1,4 +1,4 @@
-package com.projetos.encurtador_url;
+package com.projetos.encurtador_url.base62.enums;
 
 public enum CaracteresBase62Enum {
     CHAR_0('0', 0L),

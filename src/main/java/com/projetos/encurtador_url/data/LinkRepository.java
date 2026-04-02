@@ -1,5 +1,6 @@
-package com.projetos.encurtador_url;
+package com.projetos.encurtador_url.data;
 
+import com.projetos.encurtador_url.domain.entities.Link;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

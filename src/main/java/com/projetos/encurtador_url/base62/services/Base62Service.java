@@ -1,5 +1,6 @@
-package com.projetos.encurtador_url;
+package com.projetos.encurtador_url.base62.services;
 
+import com.projetos.encurtador_url.base62.enums.CaracteresBase62Enum;
 import org.springframework.stereotype.Service;
 
 @Service
