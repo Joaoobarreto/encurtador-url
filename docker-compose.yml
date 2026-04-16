@@ -35,7 +35,9 @@ services:
       - "16686:16686"
       - "6831:6831/udp"
   app:
-    image: encurtador-url
+    build:
+        context: .
+        dockerfile: Dockerfile
     container_name: encurtador-url
     labels:
       - "traefik.enable=true"

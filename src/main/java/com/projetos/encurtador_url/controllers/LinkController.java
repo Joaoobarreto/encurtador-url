@@ -2,6 +2,8 @@ package com.projetos.encurtador_url.controllers;
 
 import com.projetos.encurtador_url.LinkResponse;
 import com.projetos.encurtador_url.controllers.requests.ShortenRequest;
+import com.projetos.encurtador_url.mediator.ICommand;
+import com.projetos.encurtador_url.mediator.Mediator;
 import com.projetos.encurtador_url.useCases.encurtarUrl.EncurtarUrlUseCase;
 import com.projetos.encurtador_url.useCases.buscarLinkPorLinkCurto.BuscarLinkPorLinkCurtoUseCase;
 import com.projetos.encurtador_url.useCases.buscarLinkPorLinkCurto.BuscarLinkPorLinkCurtoCommand;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,17 +23,19 @@ import java.util.Map;
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 public class LinkController {
-
+    private Mediator mediator;
     private final EncurtarUrlUseCase encurtarUrlUseCase;
     private final BuscarLinkPorLinkCurtoUseCase buscarLinkPorLinkCurtoUseCase;
     private final DeletarLinkUseCase deletarLinkUseCase;
     private final ListarLinksUseCase listarLinksUseCase;
 
     public LinkController(
+            Mediator mediator,
             EncurtarUrlUseCase encurtarUrlUseCase,
             BuscarLinkPorLinkCurtoUseCase buscarLinkPorLinkCurtoUseCase,
             DeletarLinkUseCase deletarLinkUseCase,
             ListarLinksUseCase listarLinksUseCase) {
+        this.mediator = mediator;
         this.encurtarUrlUseCase = encurtarUrlUseCase;
         this.buscarLinkPorLinkCurtoUseCase = buscarLinkPorLinkCurtoUseCase;
         this.deletarLinkUseCase = deletarLinkUseCase;
@@ -53,7 +56,7 @@ public class LinkController {
 
     @GetMapping("/links")
     public ResponseEntity<List<LinkResponse>> getAllLinks() {
-        List<LinkResponse> links = listarLinksUseCase.executar(new ListarLinksCommand());
+        List<LinkResponse> links = mediator.send(new ListarLinksCommand());
         return ResponseEntity.ok(links);
     }
 
@@ -66,26 +69,4 @@ public class LinkController {
         
         return ResponseEntity.ok(response);
     }
-/**
-    *//**
-     * Exception handler para ResourceNotFoundException
-     *//*
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleResourceNotFound(ResourceNotFoundException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
-    }
-
-    *//**
-     * Exception handler para IllegalArgumentException
-     *//*
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }*/
 }
