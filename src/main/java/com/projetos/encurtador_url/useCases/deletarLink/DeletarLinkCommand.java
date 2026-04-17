@@ -1,4 +1,6 @@
 package com.projetos.encurtador_url.useCases.deletarLink;
 
-public record DeletarLinkCommand(String shortCode) { }
+import com.projetos.encurtador_url.mediator.ICommand;
+
+public record DeletarLinkCommand(String shortCode) implements ICommand<Void> { }
 

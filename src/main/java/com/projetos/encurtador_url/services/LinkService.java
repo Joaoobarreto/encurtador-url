@@ -22,7 +22,7 @@ public class LinkService {
     }
 
     public LinkResponse shortenUrl(String originalUrl) {
-        Long codigo = Contador.contador;
+        Long codigo = Contador.getContador();
 
         String base62 = base62Service.base10ToBase62(codigo);
         
@@ -30,7 +30,7 @@ public class LinkService {
 
         Link savedLink = linkRepository.save(link);
 
-        Contador.contador++;
+        Contador.aumentar();
         
         return toResponse(savedLink);
     }
