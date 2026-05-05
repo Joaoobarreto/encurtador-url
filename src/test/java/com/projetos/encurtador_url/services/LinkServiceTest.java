@@ -40,7 +40,7 @@ class LinkServiceTest {
         // Arrange
         String originalUrl = "https://example.com";
         when(base62Service.base10ToBase62(2000000L)).thenReturn("abc");
-        LinkEntity entity = new LinkEntity("abc", originalUrl, 0);
+        LinkEntity entity = new LinkEntity("abc", originalUrl);
         entity.setId(1L);
         when(linkRepository.save(any(LinkEntity.class))).thenReturn(entity);
 
@@ -58,7 +58,7 @@ class LinkServiceTest {
     void testGetLinkByShortCode() {
         // Arrange
         String shortCode = "abc";
-        LinkEntity entity = new LinkEntity(shortCode, "https://example.com", 0);
+        LinkEntity entity = new LinkEntity(shortCode, "https://example.com");
         entity.setId(1L);
         when(linkRepository.findByLinkCurto(shortCode)).thenReturn(Optional.of(entity));
         when(linkRepository.save(any(LinkEntity.class))).thenReturn(entity);
@@ -86,8 +86,8 @@ class LinkServiceTest {
     @Test
     void testGetAllLinks() {
         // Arrange
-        LinkEntity entity1 = new LinkEntity("abc", "https://example1.com", 0);
-        LinkEntity entity2 = new LinkEntity("def", "https://example2.com", 0);
+        LinkEntity entity1 = new LinkEntity("abc", "https://example1.com");
+        LinkEntity entity2 = new LinkEntity("def", "https://example2.com");
         when(linkRepository.findAll()).thenReturn(List.of(entity1, entity2));
 
         // Act
@@ -103,7 +103,7 @@ class LinkServiceTest {
     void testDeleteLink() {
         // Arrange
         String shortCode = "abc";
-        LinkEntity entity = new LinkEntity(shortCode, "https://example.com", 0);
+        LinkEntity entity = new LinkEntity(shortCode, "https://example.com");
         when(linkRepository.findByLinkCurto(shortCode)).thenReturn(Optional.of(entity));
 
         // Act

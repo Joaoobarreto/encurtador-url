@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
   traefik:
@@ -34,13 +32,36 @@ services:
     ports:
       - "16686:16686"
       - "6831:6831/udp"
+
+  redis:
+    image: redis:7.0
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server 
+      --appendonly yes
+      --appendfsync everysec
+    volumes:
+      - redis_data:/data
+    restart: always
+
+
   app:
     build:
         context: .
         dockerfile: Dockerfile
     container_name: encurtador-url
+    depends_on:
+      - redis
+    environment:
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`encurtador.localhost`)"
       - "traefik.http.routers.app.entrypoints=web"
       - "traefik.http.services.app.loadbalancer.server.port=8080"
+
+volumes:
+  redis_data:

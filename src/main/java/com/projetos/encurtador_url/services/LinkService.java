@@ -5,7 +5,6 @@ import com.projetos.encurtador_url.ResourceNotFoundException;
 import com.projetos.encurtador_url.base62.services.Base62Service;
 import com.projetos.encurtador_url.data.LinkEntity;
 import com.projetos.encurtador_url.data.mappers.LinkMapper;
-import com.projetos.encurtador_url.domain.entities.Contador;
 import com.projetos.encurtador_url.domain.entities.Link;
 import com.projetos.encurtador_url.domain.repositories.ILinkRepository;
 import org.springframework.stereotype.Service;
@@ -17,35 +16,33 @@ public class LinkService {
 
     private final ILinkRepository linkRepository;
     private final Base62Service base62Service;
+    private final ContadorService contadorService;
 
-    public LinkService(ILinkRepository linkRepository, Base62Service base62Service) {
+    public LinkService(ILinkRepository linkRepository, Base62Service base62Service, ContadorService contadorService) {
         this.linkRepository = linkRepository;
         this.base62Service = base62Service;
+        this.contadorService = contadorService;
     }
 
     public LinkResponse shortenUrl(String originalUrl) {
-        Long codigo = Contador.getContador();
+        Long codigo = contadorService.getNext();
 
         String base62 = base62Service.base10ToBase62(codigo);
         
-        Link link = new Link(base62, originalUrl);
+        LinkEntity link = new LinkEntity(base62, originalUrl);
 
         LinkEntity entity = LinkMapper.toEntity(link);
         LinkEntity savedEntity = linkRepository.save(entity);
 
-        Contador.aumentar();
-        
-        return toResponse(LinkMapper.toDomain(savedEntity));
+        return toResponse(savedEntity);
     }
 
     public LinkResponse getLinkByShortCode(String shortCode) {
-        LinkEntity entity = linkRepository.findByLinkCurto(shortCode)
+        LinkEntity link = linkRepository.findByLinkCurto(shortCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Link não encontrado"));
 
-        Link link = LinkMapper.toDomain(entity);
         link.novoClick();
-        LinkEntity updatedEntity = LinkMapper.toEntity(link);
-        linkRepository.save(updatedEntity);
+        linkRepository.save(link);
 
         return toResponse(link);
     }
@@ -53,7 +50,6 @@ public class LinkService {
     public List<LinkResponse> getAllLinks() {
         List<LinkEntity> entities = linkRepository.findAll();
         return entities.stream()
-                .map(LinkMapper::toDomain)
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
@@ -64,14 +60,14 @@ public class LinkService {
         linkRepository.delete(entity);
     }
 
-    private LinkResponse toResponse(Link link) {
+    private LinkResponse toResponse(LinkEntity link) {
         String linkOriginal = link.getLinkOriginal();
         String normalizedOriginal = (!linkOriginal.startsWith("http://") && !linkOriginal.startsWith("https://")) 
-            ? "https://" + linkOriginal 
+            ? "http://" + linkOriginal
             : linkOriginal;
 
         return new LinkResponse(
-                "https://encurtador.localhost/" + link.getLinkCurto(),
+                "http://encurtador.localhost/api/" + link.getLinkCurto(),
                 normalizedOriginal,
                 link.getClick()
         );

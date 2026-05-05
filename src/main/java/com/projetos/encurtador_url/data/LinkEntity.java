@@ -26,10 +26,11 @@ public class LinkEntity {
 
     public LinkEntity() { }
 
-    public LinkEntity(String linkCurto, String linkOriginal, Integer click) {
+    public LinkEntity(String linkCurto, String linkOriginal) {
         this.linkCurto = linkCurto;
         this.linkOriginal = linkOriginal;
-        this.click = click;
+        this.click = 0;
     }
 
+    public void novoClick() { this.click++; }
 }

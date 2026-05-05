@@ -19,5 +19,5 @@ public class Link {
 
     public Link() { }
 
-    public void novoClick() { this.click++; }
+
 }
