@@ -18,7 +18,7 @@ public class ContadorService {
         Boolean exists = redisTemplate.hasKey(KEY);
 
         if (Boolean.FALSE.equals(exists)) {
-            redisTemplate.opsForValue().setIfAbsent(KEY, String.valueOf(2_000_000));
+            redisTemplate.opsForValue().setIfAbsent(KEY, String.valueOf(INITIAL_VALUE));
         }
 
         return redisTemplate.opsForValue().increment(KEY);
